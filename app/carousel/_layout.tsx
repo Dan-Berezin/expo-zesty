@@ -7,9 +7,9 @@ import { ImageBackground, ImageURISource, StyleSheet, Text, TouchableOpacity, Vi
 import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 
 const data = [
-  { id: 1, title: "Invierte #EnFacil", image: CarouselImage1, backgroundColor: '#09E5AD' },
-  { id: 2, title: "Tu plata esta segura", image: CarouselImage2, backgroundColor: '#9071FF' },
-  { id: 3, title: "Partamos?", image: CarouselImage3, backgroundColor: '#09E5AD' },
+  { id: 1, title: "Invierte #EnFácil", subtitle: "Compra y vende más de 12.000 acciones y ETFs, solo con un par de clics.", image: CarouselImage1, backgroundColor: '#09E5AD' },
+  { id: 2, title: "Tu plata está segura", subtitle: "Los brokers a través de los cuales operamos están regulados tanto en Chile (CMF) como en Estados Unidos (FINRA). Tus acciones están aseguradas por hasta US$500.000 por el SIPC.", image: CarouselImage2, backgroundColor: '#9071FF' },
+  { id: 3, title: "¿Partamos?", subtitle: "Invierte desde 1 dólar, rápido y fácil. Nosotros te acompañamos en cada paso del proceso.", image: CarouselImage3, backgroundColor: '#09E5AD' },
 ];
 export default function CarouselLayout() {
   const carouselRef = useRef<ICarouselInstance>(null);
@@ -26,8 +26,9 @@ export default function CarouselLayout() {
             <View style={[styles.carouselContainer, { backgroundColor: item.backgroundColor }]}>
                 <ImageBackground resizeMode="contain" style={styles.carouselImage} source={item.image as ImageURISource}/>
             </View>
-            <View>
-                <Text style={{color: '#FF0000', fontSize: 16}}>{item.title}</Text>
+            <View style={{padding: 20, gap: 18, justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={{color: '#000000', fontSize: 22, fontWeight: 'bold', fontFamily: 'DINPro-Bold'}}>{item.title}</Text>
+                <Text style={{color: '#000000', fontSize: 16, fontFamily: 'DINPro'}}>{item.subtitle}</Text>
             </View>
             </>
 
@@ -37,7 +38,7 @@ export default function CarouselLayout() {
           style={styles.button} 
           onPress={() => router.push('/clickers')}
         >
-          <Text style={styles.buttonText}>Go to Clickers</Text>
+          <Text style={styles.buttonText}>Ver precios</Text>
         </TouchableOpacity>
       </View>
   );
@@ -64,6 +65,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: '600',
+    fontFamily: 'DINPro-Medium',
   },
 });

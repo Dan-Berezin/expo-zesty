@@ -40,6 +40,23 @@
             "backgroundColor": "#9678FE"
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/DINPro.otf",
+            "./assets/fonts/DINPro-Light.otf",
+            "./assets/fonts/DINPro-Medium.otf",
+            "./assets/fonts/DINPro-Bold.otf",
+            "./assets/fonts/DINPro-Black.otf",
+            "./assets/fonts/FF_DIN_Pro_Regular_Italic.otf",
+            "./assets/fonts/FF_DIN_Pro_Light_Italic.otf",
+            "./assets/fonts/FF_DIN_Pro_Medium_Italic.otf",
+            "./assets/fonts/FF_DIN_Pro_Bold_Italic.otf",
+            "./assets/fonts/FF_DIN_Pro_Black_Italic.otf"
+          ]
+        }
       ]
     ],
     "experiments": {

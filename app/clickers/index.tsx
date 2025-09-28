@@ -1,110 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StockPrice, useWebSocket } from '@/hooks/use-websocket';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface TickData {
-  type: 'tick';
-  ticker: string;
-  price: number;
-  ts: number;
-}
-
-interface HistoryData {
-  type: 'history';
-  range: string;
-  data: {
-    [ticker: string]: Array<{
-      date: string;
-      open: number;
-      high: number;
-      low: number;
-      close: number;
-    }>;
-  };
-}
-
-interface StockPrice {
-  ticker: string;
-  price: number;
-  lastUpdate: number;
-}
-
-// Custom hook to manage WebSocket connection
-function useStockWebSocket(url: string) {
-  const [stockPrices, setStockPrices] = useState<StockPrice[]>([]);
-  const [historyData, setHistoryData] = useState<HistoryData['data'] | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-
-  useEffect(() => {
-    const ws = new WebSocket(url);
-    setConnectionStatus('connecting');
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      setConnectionStatus('connected');
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        
-        if (message.type === 'history') {
-          console.log('Received history data for', Object.keys(message.data).length, 'tickers');
-          setHistoryData(message.data);
-          
-          // Initialize stock prices from history data
-          const initialPrices: StockPrice[] = Object.entries(message.data).map(([ticker, history]) => {
-            const latestData = history[history.length - 1];
-            return {
-              ticker,
-              price: latestData.close,
-              lastUpdate: Date.now(),
-            };
-          });
-          setStockPrices(initialPrices);
-        } else if (message.type === 'tick') {
-          const tickData = message as TickData;
-          setStockPrices(prev => 
-            prev.map(stock => 
-              stock.ticker === tickData.ticker 
-                ? { ...stock, price: tickData.price, lastUpdate: tickData.ts }
-                : stock
-            )
-          );
-        }
-      } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
-      }
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-      setConnectionStatus('disconnected');
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      setConnectionStatus('disconnected');
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, [url]);
-
-  return { stockPrices, historyData, connectionStatus };
-}
 
 export default function ClickersScreen() {
-  const { stockPrices, historyData, connectionStatus } = useStockWebSocket('ws://0.tcp.sa.ngrok.io:15181');
+  const { stockPrices, historyData, connectionStatus } = useWebSocket();
+  const router = useRouter();
+
+  const handleStockPress = (ticker: string) => {
+    router.push(`/clickers/${ticker}`);
+  };
 
   const renderStockItem = ({ item }: { item: StockPrice }) => (
-    <View style={styles.stockItem}>
+    <TouchableOpacity 
+      style={styles.stockItem}
+      onPress={() => handleStockPress(item.ticker)}
+      activeOpacity={0.7}
+    >
       <Text style={styles.ticker}>{item.ticker}</Text>
       <Text style={styles.price}>${item.price}</Text>
       <Text style={styles.timestamp}>
         {new Date(item.lastUpdate).toLocaleTimeString()}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -118,12 +37,6 @@ export default function ClickersScreen() {
           <Text style={styles.statusText}>{connectionStatus}</Text>
         </View>
       </View>
-
-      {historyData && (
-        <Text style={styles.subtitle}>
-          Showing {Object.keys(historyData).length} stocks with {Object.values(historyData)[0]?.length || 0} days of history
-        </Text>
-      )}
 
       <FlatList
         data={stockPrices}

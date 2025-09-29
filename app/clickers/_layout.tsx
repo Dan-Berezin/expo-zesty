@@ -4,6 +4,7 @@ export default function ClickersLayout() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="[ticker]" options={{ headerShown: false }} />
     </Stack>
   );
 }

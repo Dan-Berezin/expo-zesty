@@ -141,6 +141,22 @@ export default function ClickerDetailScreen() {
       <ScrollView style={styles.content}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>{ticker}</Text>
+          {priceChange && (
+            <View style={styles.varianceSection}>
+              <Text style={[
+                styles.varianceText,
+                { color: priceChange.isPositive ? '#4CAF50' : '#F44336' }
+              ]}>
+                {priceChange.isPositive ? '+' : ''}${priceChange.absolute}
+              </Text>
+              <Text style={[
+                styles.varianceText,
+                { color: priceChange.isPositive ? '#4CAF50' : '#F44336' }
+              ]}>
+                ({priceChange.isPositive ? '+' : ''}{priceChange.percent}%)
+              </Text>
+            </View>
+          )}
         </View>
 
         {renderTabs()}
@@ -154,9 +170,9 @@ export default function ClickerDetailScreen() {
               data={chartData}
               width={chartWidth}
               height={250}
-              color={priceChange?.isPositive ? "rgb(0, 151, 78)" : "rgb(137, 39, 39)"}
+              color={priceChange?.isPositive ? '#4CAF50' : '#F44336'}
               thickness={2}
-              startFillColor={priceChange?.isPositive ? "rgb(0, 151, 78, 0.5)" : "rgb(137, 39, 39, 0.5)"}
+              startFillColor={priceChange?.isPositive ? '#4CAF50' : '#F44336'}
               startOpacity={0.5}
               endOpacity={0}
               initialSpacing={0}
@@ -164,8 +180,7 @@ export default function ClickerDetailScreen() {
               noOfSections={4}
               areaChart
               yAxisTextStyle={{ fontSize: 12, color: '#666' }}
-              xAxisTextStyle={{ fontSize: 10, color: '#666' }}
-              hideDataPoints={selectedRange != '1W'}
+              hideDataPoints={selectedRange !== '1W'}
               dataPointsColor="#007AFF"
               dataPointsRadius={3}
               hideRules
@@ -233,6 +248,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
+  },
+  varianceSection: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  varianceText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
   },
   priceSection: {
     alignItems: 'center',

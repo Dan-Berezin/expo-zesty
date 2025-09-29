@@ -8,6 +8,11 @@
     "scheme": "expozesty",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#9678FE"
+    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.anonymous.expozesty"

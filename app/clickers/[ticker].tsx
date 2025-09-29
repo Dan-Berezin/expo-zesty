@@ -17,30 +17,24 @@ interface TabOption {
 }
 
 const TIME_RANGES: TabOption[] = [
-  { key: '1D', label: '1D', days: 1 },
-  { key: '1W', label: '1W', days: 7 },
-  { key: '1M', label: '1M', days: 30 },
-  { key: '2M', label: '2M', days: 60 },
+  { key: '1D', label: 'Hoy', days: 1 },
+  { key: '1W', label: '1 Sem', days: 7 },
+  { key: '1M', label: '1 Mes', days: 30 },
+  { key: '2M', label: '2 Meses', days: 60 },
 ];
 
 export default function ClickerDetailScreen() {
   const { ticker } = useLocalSearchParams<{ ticker: string }>();
   const router = useRouter();
-  const { stockPrices, historyData, connectionStatus } = useWebSocket();
+  const { historyData, intradayData } = useWebSocket();
   
-  // Tab state and ref
   const [selectedRange, setSelectedRange] = useState<TimeRange>('1M');
   const selectedRangeRef = useRef<TimeRange>('1M');
 
-  // Update ref when state changes
   React.useEffect(() => {
     selectedRangeRef.current = selectedRange;
   }, [selectedRange]);
-
-  // Get current stock price for the ticker
-  const currentStock = stockPrices.find(stock => stock.ticker === ticker);
   
-  // Prepare chart data based on selected time range
   const chartData = useMemo(() => {
     if (!historyData || !ticker || !historyData[ticker]) {
       return [];
@@ -51,24 +45,18 @@ export default function ClickerDetailScreen() {
     
     const filteredData = fullData.slice(-selectedDays);
 
-    // Calculate spacing based on data length and chart width
     const dataLength = filteredData.length;
-    const availableWidth = chartWidth - 40;
-    const optimalSpacing = Math.max(1, Math.floor(availableWidth / dataLength));
 
-    // Fixed label frequencies to ensure labels are always shown
-    let labelFrequency = 1;
-
+    const optimalSpacing = Math.max(1, Math.floor(chartWidth / dataLength));
 
     return filteredData.map((entry, index) => ({
       value: entry.close,
-      label: index % labelFrequency === 0 ? entry.date.slice(5) : '',
+      label: index % 1 === 0 ? entry.date.slice(5) : '',
       labelTextStyle: { fontSize: 10, color: '#666' },
       spacing: optimalSpacing,
     }));
-  }, [historyData, ticker, selectedRange]);
+  }, [historyData, intradayData, ticker, selectedRange]);
 
-  // Calculate price change for the selected period
   const priceChange = useMemo(() => {
     if (!chartData || chartData.length < 2) return null;
     
@@ -115,14 +103,8 @@ export default function ClickerDetailScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>← Back</Text>
+          <Text style={styles.backButtonText}>← Atrás</Text>
         </TouchableOpacity>
-        <View style={[styles.statusIndicator, { 
-          backgroundColor: connectionStatus === 'connected' ? '#4CAF50' : 
-                          connectionStatus === 'connecting' ? '#FF9800' : '#F44336' 
-        }]}>
-          <Text style={styles.statusText}>{connectionStatus}</Text>
-        </View>
       </View>
       
       <ScrollView style={styles.content}>
@@ -151,16 +133,18 @@ export default function ClickerDetailScreen() {
         {chartData.length > 0 ? (
           <View style={styles.chartContainer}>
             <Text style={styles.chartTitle}>
-              Price History ({TIME_RANGES.find(r => r.key === selectedRange)?.label})
+              Valores ({TIME_RANGES.find(r => r.key === selectedRange)?.label})
             </Text>
             <LineChart
               data={chartData}
               width={chartWidth}
               height={250}
+              xAxisLength={chartWidth - 50}
               color={priceChange?.isPositive ? '#4CAF50' : '#F44336'}
               thickness={2}
               startFillColor={priceChange?.isPositive ? '#4CAF50' : '#F44336'}
               startOpacity={0.5}
+              endFillColor={priceChange?.isPositive ? '#4CAF50' : '#F44336'}
               endOpacity={0}
               initialSpacing={0}
               spacing={chartData.length > 0 ? (chartData[0]?.spacing ?? 10) : 10}
@@ -174,7 +158,6 @@ export default function ClickerDetailScreen() {
               showVerticalLines={false}
               xAxisColor="lightgray"
               yAxisColor="lightgray"
-              curved
               adjustToWidth={true}
               stripHeight={250}
               stripColor={'rgba(0, 122, 255, 0.2)'}
@@ -182,10 +165,10 @@ export default function ClickerDetailScreen() {
               pointerConfig={{
                 showPointerStrip: true,
                 pointerStripHeight: 250,
-                pointerStripColor: '#007AFF',
+                pointerStripColor: '#C5C5C5',
                 pointerStripWidth: 2,
                 strokeDashArray: [6, 3],
-                pointerColor: '#007AFF',
+                pointerColor: '#C5C5C5',
                 radius: 6,
                 pointerLabelWidth: 100,
                 pointerLabelHeight: 90,
@@ -243,9 +226,6 @@ export default function ClickerDetailScreen() {
           </View>
         ) : (
           <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>
-              {connectionStatus === 'connected' ? 'Loading chart data...' : 'Connecting to data source...'}
-            </Text>
           </View>
         )}
       </ScrollView>
@@ -262,6 +242,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 16,
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -272,7 +253,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 16,
-    color: '#007AFF',
+    color: '#C5C5C5',
     fontWeight: '600',
   },
   statusIndicator: {
@@ -321,7 +302,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  // Tab styles
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: 'white',
@@ -329,10 +309,6 @@ const styles = StyleSheet.create({
     padding: 4,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
@@ -346,7 +322,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activeTab: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#C5C5C5',
   },
   tabText: {
     fontSize: 14,
@@ -362,12 +338,8 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
     shadowOpacity: 0.1,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
     elevation: 5,
   },
   chartTitle: {

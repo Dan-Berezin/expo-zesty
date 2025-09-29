@@ -8,11 +8,6 @@
     "scheme": "expozesty",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#9678FE"
-    },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.anonymous.expozesty"
@@ -34,18 +29,6 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#9678FE",
-          "dark": {
-            "backgroundColor": "#9678FE"
-          }
-        }
-      ],
       [
         "expo-font",
         {

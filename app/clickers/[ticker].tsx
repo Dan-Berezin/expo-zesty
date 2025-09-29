@@ -154,10 +154,10 @@ export default function ClickerDetailScreen() {
               data={chartData}
               width={chartWidth}
               height={250}
-              color="#007AFF"
+              color={priceChange?.isPositive ? "rgb(0, 151, 78)" : "rgb(137, 39, 39)"}
               thickness={2}
-              startFillColor={priceChange?.isPositive ? "rgba(0, 122, 255, 0.3)" : "rgba(255, 0, 0, 0.3)"}
-              startOpacity={1}
+              startFillColor={priceChange?.isPositive ? "rgb(0, 151, 78, 0.5)" : "rgb(137, 39, 39, 0.5)"}
+              startOpacity={0.5}
               endOpacity={0}
               initialSpacing={0}
               spacing={chartData.length > 0 ? (chartData[0]?.spacing ?? 10) : 10}
@@ -317,4 +317,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

@@ -36,6 +36,21 @@ export default function ClickerDetailScreen() {
   }, [selectedRange]);
   
   const chartData = useMemo(() => {
+    if (selectedRange === '1D' && intradayData && ticker && intradayData[ticker]) {
+      const todayData = intradayData[ticker];
+      if (todayData.length > 0) {
+        const dataLength = todayData.length;
+        const optimalSpacing = Math.max(1, Math.floor(chartWidth / dataLength));
+        
+        return todayData.map((entry, index) => ({
+          value: entry.price,
+          label: index % Math.max(1, Math.floor(dataLength / 6)) === 0 ? entry.date : '',
+          labelTextStyle: { fontSize: 10, color: '#666' },
+          spacing: optimalSpacing,
+        }));
+      }
+    }
+    
     if (!historyData || !ticker || !historyData[ticker]) {
       return [];
     }
@@ -44,9 +59,7 @@ export default function ClickerDetailScreen() {
     const selectedDays = TIME_RANGES.find(range => range.key === selectedRange)?.days || 30;
     
     const filteredData = fullData.slice(-selectedDays);
-
     const dataLength = filteredData.length;
-
     const optimalSpacing = Math.max(1, Math.floor(chartWidth / dataLength));
 
     return filteredData.map((entry, index) => ({

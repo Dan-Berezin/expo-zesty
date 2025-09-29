@@ -58,20 +58,7 @@ export default function ClickerDetailScreen() {
 
     // Fixed label frequencies to ensure labels are always shown
     let labelFrequency = 1;
-    switch (selectedRange) {
-      case '1D':
-        labelFrequency = Math.max(1, Math.floor(dataLength / 4)); // Show ~4 labels
-        break;
-      case '1W':
-        labelFrequency = 1; // Show all days
-        break;
-      case '1M':
-        labelFrequency = 5; // Show every 2nd to 5th day
-        break;
-      case '2M':
-        labelFrequency = 5; // Show every 2nd to 7th day
-        break;
-    }
+
 
     return filteredData.map((entry, index) => ({
       value: entry.close,
@@ -180,7 +167,7 @@ export default function ClickerDetailScreen() {
               noOfSections={4}
               areaChart
               yAxisTextStyle={{ fontSize: 12, color: '#666' }}
-              hideDataPoints={selectedRange !== '1W'}
+              hideDataPoints={true}
               dataPointsColor="#007AFF"
               dataPointsRadius={3}
               hideRules
@@ -189,6 +176,69 @@ export default function ClickerDetailScreen() {
               yAxisColor="lightgray"
               curved
               adjustToWidth={true}
+              stripHeight={250}
+              stripColor={'rgba(0, 122, 255, 0.2)'}
+              stripOpacity={0.5}
+              pointerConfig={{
+                showPointerStrip: true,
+                pointerStripHeight: 250,
+                pointerStripColor: '#007AFF',
+                pointerStripWidth: 2,
+                strokeDashArray: [6, 3],
+                pointerColor: '#007AFF',
+                radius: 6,
+                pointerLabelWidth: 100,
+                pointerLabelHeight: 90,
+                pointerLabelComponent: (items) => {
+                  return (
+                    <View
+                      style={{
+                        height: 90,
+                        width: 100,
+                        justifyContent: 'center',
+                        marginTop: 60,
+                        marginLeft: -50,
+                      }}>
+                      <View
+                        style={{
+                          paddingHorizontal: 14,
+                          paddingVertical: 8,
+                          borderRadius: 16,
+                          backgroundColor: '#E9E9E9',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          shadowColor: '#000',
+                          shadowOffset: {
+                            width: 0,
+                            height: 2,
+                          },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 3.84,
+                          elevation: 5,
+                        }}>
+                        <Text
+                          style={{
+                            color: 'black',
+                            fontSize: 12,
+                            marginBottom: 4,
+                            textAlign: 'center',
+                          }}>
+                          {items[0]?.date || items[0]?.label}
+                        </Text>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            color: '#333',
+                            fontSize: 14,
+                          }}>
+                          ${items[0]?.value?.toFixed(2)}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                },
+              }}
             />
           </View>
         ) : (

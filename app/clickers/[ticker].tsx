@@ -4,9 +4,9 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Dimensions, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 
-// Get screen dimensions
+
 const { width: screenWidth } = Dimensions.get('window');
-const chartWidth = screenWidth - 40; // Account for container padding (20*2) + chart container padding (16*2)
+const chartWidth = screenWidth - 40;
 
 type TimeRange = '1D' | '1W' | '1M' | '2M';
 
@@ -137,7 +137,7 @@ export default function ClickerDetailScreen() {
             </Text>
             <LineChart
               data={chartData}
-              width={chartWidth}
+              width={chartWidth -52}
               height={250}
               xAxisLength={chartWidth - 50}
               color={priceChange?.isPositive ? '#4CAF50' : '#F44336'}

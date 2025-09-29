@@ -5,7 +5,7 @@ import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from
 
 
 export default function ClickersScreen() {
-  const { stockPrices, historyData, connectionStatus } = useWebSocket();
+  const { stockPrices } = useWebSocket();
   const router = useRouter();
 
   const handleStockPress = (ticker: string) => {
@@ -29,13 +29,7 @@ export default function ClickersScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Live Stock Prices</Text>
-        <View style={[styles.statusIndicator, { 
-          backgroundColor: connectionStatus === 'connected' ? '#4CAF50' : 
-                          connectionStatus === 'connecting' ? '#FF9800' : '#F44336' 
-        }]}>
-          <Text style={styles.statusText}>{connectionStatus}</Text>
-        </View>
+        <Text style={styles.title}>Precios en vivo</Text>
       </View>
 
       <FlatList
@@ -55,6 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 16,
+    marginTop: 16,
   },
   header: {
     flexDirection: 'row',
@@ -65,7 +60,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#030303',
   },
   statusIndicator: {
     paddingHorizontal: 12,
@@ -95,19 +90,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 8,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
     elevation: 3,
-    flex: 0.48,
+    flex: 0.45,
   },
   ticker: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#030303',
     marginBottom: 4,
   },
   price: {
@@ -118,6 +109,6 @@ const styles = StyleSheet.create({
   },
   timestamp: {
     fontSize: 12,
-    color: '#999',
+    color: '#090909',
   },
 });

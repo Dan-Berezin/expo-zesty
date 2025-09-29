@@ -24,6 +24,12 @@ interface TickData {
       [ticker: string]: HistoricalPriceEntry[];
     };
   }
+
+  interface IntradayDataPoint {
+    timestamp: number;
+    price: number;
+    date: string; 
+  }
   
   export interface StockPrice {
     ticker: string;
@@ -35,6 +41,7 @@ export function useWebSocket() {
     const url = Config.webSocket.stockDataUrl;
     const [stockPrices, setStockPrices] = useState<StockPrice[]>([]);
     const [historyData, setHistoryData] = useState<HistoryData['data'] | null>(null);
+    const [intradayData, setIntradayData] = useState<{[ticker: string]: IntradayDataPoint[]}>({});
     const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
   
     useEffect(() => {
@@ -63,8 +70,25 @@ export function useWebSocket() {
               };
             });
             setStockPrices(initialPrices);
+            const initialIntradayData: {[ticker: string]: IntradayDataPoint[]} = {};
+            Object.entries(message.data as HistoryData['data']).forEach(([ticker, history]) => {
+              const latestData = history[history.length - 1];
+              const now = Date.now();
+              initialIntradayData[ticker] = [{
+                timestamp: now,
+                price: latestData.close,
+                date: new Date(now).toLocaleTimeString('en-US', { 
+                  hour12: false, 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })
+              }];
+            });
+            setIntradayData(initialIntradayData);
           } else if (message.type === 'tick') {
             const tickData = message as TickData;
+            
+            // Update current prices
             setStockPrices(prev => 
               prev.map(stock => 
                 stock.ticker === tickData.ticker 
@@ -72,6 +96,31 @@ export function useWebSocket() {
                   : stock
               )
             );
+
+            // Accumulate tick data for intraday charts
+            setIntradayData(prev => {
+              const currentData = prev[tickData.ticker] || [];
+              const newDataPoint: IntradayDataPoint = {
+                timestamp: tickData.ts,
+                price: tickData.price,
+                date: new Date(tickData.ts).toLocaleTimeString('en-US', { 
+                  hour12: false, 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })
+              };
+
+              // Keep only the last 500 data points to prevent memory issues
+              const updatedData = [...currentData, newDataPoint];
+              if (updatedData.length > 500) {
+                updatedData.shift(); // Remove the oldest data point
+              }
+
+              return {
+                ...prev,
+                [tickData.ticker]: updatedData
+              };
+            });
           }
         } catch (error) {
           console.error('Error parsing WebSocket message:', error);
@@ -93,6 +142,6 @@ export function useWebSocket() {
       };
     }, [url]);
   
-    return { stockPrices, historyData, connectionStatus };
+    return { stockPrices, historyData, intradayData, connectionStatus };
   }
   

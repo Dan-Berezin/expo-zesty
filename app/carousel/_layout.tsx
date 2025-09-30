@@ -31,8 +31,8 @@ export default function CarouselLayout() {
                 <ImageBackground resizeMode="contain" style={styles.carouselImage} source={item.image as ImageURISource}/>
             </View>
             <View style={{padding: 20, gap: 18, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{color: '#000000', fontSize: 22, fontWeight: 'bold', fontFamily: 'DINPro-Bold'}}>{item.title}</Text>
-                <Text style={{color: '#000000', fontSize: 16, fontFamily: 'DINPro'}}>{item.subtitle}</Text>
+                <Text style={styles.mainTitle}>{item.title}</Text>
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
             </View>
             </>
         )}
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
    paddingVertical: 10,
   },
   dot: {
-  
     height: 8,
     marginHorizontal: 4,
     borderRadius: 4,
@@ -97,5 +96,16 @@ const styles = StyleSheet.create({
   inactiveDot: {
     width: 8,
     backgroundColor: 'gray',
+  },
+  mainTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    fontFamily: 'DINPro',
+    color: '#000000',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontFamily: 'DINPro',
+    color: '#000000',
   },
 });

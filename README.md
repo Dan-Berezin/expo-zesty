@@ -1,50 +1,60 @@
-# Welcome to your Expo app 👋
+## Comenzar
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+1. Instala las dependencias
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Instala la app Expo Go en tu teléfono
 
-## Learn more
+3. Clona el repositorio en tu computador. Desde la carpeta principal, ejecuta el websocket:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+node ws-mock.js
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+3. Configura la ruta del websocket en constants/config.ts
 
-## Join the community
+    Si ejecutas la app en un simulador local en tu computador, debería ser:
+    ws://localhost:8081
 
-Join our community of developers creating universal apps.
+    Si usas Expo Go, recomiendo instalar y ejecutar NGrok para exponer el websocket.
+    En tu terminal, ejecuta:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+ngrok tcp 8081
+```
+
+   Esto expone tu puerto 8081.
+   Copia la ruta de redireccionamiento en el archivo config (debe usar ws:// como protocolo, no tcp://).
+
+4. Ejecuta Expo
+
+```bash
+npx expo start
+```
+
+   Esto mostrará un código QR en tu pantalla. Escaneándolo desde tu teléfono con la app Expo Go, se abrirá la aplicación.
+
+   Presionando 'a' en la terminal se abrirá el simulador de Android (si tienes Android Studio instalado).
+
+   Presionando 'i' se abrirá el simulador de iOS (si tienes Xcode instalado).
+
+Si después de escanear el QR tu teléfono no encuentra la ruta, puede que necesites exponer la app mediante tunneling:
+
+```bash
+npx expo start --tunnel
+```
+
+5. Limitaciones
+   La mayor limitacion la encontre en como se construye la serie de tiempo del dia, ya que comienza a correr en el momento en que se instancia el websocket, principalmente pensado para simular valores en vivo. Asumi que lo mas honesto era no modificar el ws-mock entregado, por lo que no fue posible mostrar variaciones diarias en el dashboard, solo valores en vivo.
+
+6. Tiempo invertido
+
+   En el proyecto se invirtieron cerca de 6 hrs netas. Las mayores dificultades se encontraron en configurar la aplicacion Expo de una forma sencilla que pudiera correr en cualquier computador sin necesidad de una cuenta EAS o de descargar un APK. La representacion de los graficos fue mas directa.
+
+7. Uso de IA
+
+   Se utilizo IA en la construccion del hook, que era la manera mas eficiente de recibir los datos del websocket.
+   El resto de la aplicacion se baso en experiencia previa, con uso de IA para resolucion de errores y recomendaciones de buenas practicas principalmente.
